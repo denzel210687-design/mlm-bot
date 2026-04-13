@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Пользователи{% endblock %}
+{% block content %}
+<div class="bg-white rounded-2xl shadow p-6">
+  <h2 class="text-xl font-semibold mb-4">Пользователи</h2>
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-left border-separate border-spacing-y-2">
+      <thead>
+        <tr class="text-slate-600 text-sm">
+          <th class="px-4 py-2">ID</th>
+          <th class="px-4 py-2">Имя</th>
+          <th class="px-4 py-2">Юзернейм</th>
+          <th class="px-4 py-2">Уровень</th>
+          <th class="px-4 py-2">Дата</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in users %}
+        <tr class="bg-slate-50 rounded-lg">
+          <td class="px-4 py-3"><a href="/users/{{ item.id }}" class="text-sky-600">{{ item.id }}</a></td>
+          <td class="px-4 py-3">{{ item.first_name }} {{ item.last_name }}</td>
+          <td class="px-4 py-3">@{{ item.username or '-' }}</td>
+          <td class="px-4 py-3">{{ item.level }}</td>
+          <td class="px-4 py-3">{{ item.joined_at }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

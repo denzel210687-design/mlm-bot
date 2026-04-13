@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}MLM Panel{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 py-6">
+    <header class="flex items-center justify-between mb-8">
+      <h1 class="text-2xl font-semibold">MLM Bot Manager</h1>
+      <nav class="space-x-4 text-sm">
+        <a href="/dashboard" class="text-slate-700 hover:text-slate-900">Дашборд</a>
+        <a href="/users" class="text-slate-700 hover:text-slate-900">Пользователи</a>
+        <a href="/menu" class="text-slate-700 hover:text-slate-900">Меню</a>
+        <a href="/broadcasts" class="text-slate-700 hover:text-slate-900">Рассылки</a>
+        <a href="/settings" class="text-slate-700 hover:text-slate-900">Настройки</a>
+        <a href="/welcome" class="text-slate-700 hover:text-slate-900">Welcome</a>
+      </nav>
+    </header>
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

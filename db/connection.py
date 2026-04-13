@@ -1,0 +1,19 @@
+import asyncpg
+from config import DATABASE_URL
+
+pool = None
+
+async def init_db():
+    global pool
+    if pool is None:
+        pool = await asyncpg.create_pool(DATABASE_URL, min_size=1, max_size=10)
+    return pool
+
+async def close_db():
+    global pool
+    if pool is not None:
+        await pool.close()
+        pool = None
+
+async def get_pool():
+    return pool

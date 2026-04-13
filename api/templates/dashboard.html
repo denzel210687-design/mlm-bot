@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Дашборд{% endblock %}
+{% block content %}
+<div class="grid gap-6 md:grid-cols-3">
+  <div class="bg-white rounded-2xl shadow p-6">
+    <h2 class="text-lg font-semibold mb-2">Пользователей</h2>
+    <p class="text-4xl font-bold">{{ stats.total_users }}</p>
+  </div>
+  <div class="bg-white rounded-2xl shadow p-6">
+    <h2 class="text-lg font-semibold mb-2">Рефералов</h2>
+    <p class="text-4xl font-bold">{{ stats.total_referrals }}</p>
+  </div>
+  <div class="bg-white rounded-2xl shadow p-6">
+    <h2 class="text-lg font-semibold mb-2">Рассылки</h2>
+    <p class="text-4xl font-bold">{{ stats.total_broadcasts }}</p>
+  </div>
+</div>
+{% endblock %}

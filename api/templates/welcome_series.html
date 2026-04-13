@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Welcome-серия{% endblock %}
+{% block content %}
+<div class="bg-white rounded-2xl shadow p-6">
+  <h2 class="text-xl font-semibold mb-4">Welcome-серия</h2>
+  <div class="mb-6">
+    <h3 class="text-lg font-medium mb-2">Добавить шаг</h3>
+    <form method="post" action="/welcome/add" class="space-y-4">
+      <div class="grid gap-4 md:grid-cols-3">
+        <div>
+          <label class="block text-sm font-medium text-slate-700">День</label>
+          <input type="number" name="day_number" class="w-full rounded-lg border border-slate-300 px-4 py-2" required />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700">Задержка (часы)</label>
+          <input type="number" name="delay_hours" class="w-full rounded-lg border border-slate-300 px-4 py-2" value="0" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700">Порядок</label>
+          <input type="number" name="sort_order" class="w-full rounded-lg border border-slate-300 px-4 py-2" value="0" />
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-700">Заголовок</label>
+        <input type="text" name="title" class="w-full rounded-lg border border-slate-300 px-4 py-2" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-700">Содержимое</label>
+        <textarea name="content" rows="4" class="w-full rounded-lg border border-slate-300 px-4 py-2" required></textarea>
+      </div>
+      <button type="submit" class="px-4 py-2 rounded-lg bg-sky-600 text-white font-semibold">Добавить</button>
+    </form>
+  </div>
+  <div class="space-y-4">
+    {% for item in series %}
+    <div class="border border-slate-200 rounded-xl p-4">
+      <h3 class="font-semibold">День {{ item.day_number }} — {{ item.title or 'Без заголовка' }}</h3>
+      <p class="text-slate-600">Задержка: {{ item.delay_hours }}ч</p>
+      <p class="text-slate-700">{{ item.content or '-' }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
