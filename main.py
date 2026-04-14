@@ -1,3 +1,4 @@
+import asyncio
 import os
 import threading
 import uvicorn
@@ -10,7 +11,11 @@ def run_api():
     uvicorn.run(app, host="0.0.0.0", port=port)
 
 
-if __name__ == "__main__":
+async def main():
     api_thread = threading.Thread(target=run_api, daemon=True)
     api_thread.start()
-    run_bot()
+    await run_bot()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
