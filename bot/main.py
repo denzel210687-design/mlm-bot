@@ -17,34 +17,33 @@ from bot.services.broadcast import schedule_broadcasts
 
 logger = logging.getLogger(__name__)
 
-async def startup():
-    pool = await init_db()
-    await create_tables(pool)
-    await ensure_defaults(pool)
+application = ApplicationBuilder().token(BOT_TOKEN).build()
+application.add_handler(CommandHandler('start', start_handler))
+application.add_handler(CommandHandler('menu', menu_handler))
+application.add_handler(CommandHandler('profile', profile_handler))
+application.add_handler(CommandHandler('link', link_handler))
+application.add_handler(CommandHandler('refs', referrals_handler))
+application.add_handler(CommandHandler('ai', ai_handler))
+application.add_handler(CallbackQueryHandler(menu_callback))
+application.add_error_handler(lambda update, context: logger.exception('Bot error', exc_info=con
+Set-Content -Path main.py -Value @"
+import asyncio
+import os
+import uvicorn
+from api.main import app
+from bot.main import application, run_bot, shutdown
 
-async def shutdown():
-    await close_db()
 
-async def run_bot():
-    if not BOT_TOKEN:
-        raise RuntimeError('BOT_TOKEN is required in environment variables')
-
-    application = ApplicationBuilder().token(BOT_TOKEN).build()
-    application.add_handler(CommandHandler('start', start_handler))
-    application.add_handler(CommandHandler('menu', menu_handler))
-    application.add_handler(CommandHandler('profile', profile_handler))
-    application.add_handler(CommandHandler('link', link_handler))
-    application.add_handler(CommandHandler('refs', referrals_handler))
-    application.add_handler(CommandHandler('ai', ai_handler))
-    application.add_handler(CallbackQueryHandler(menu_callback))
-    application.add_error_handler(lambda update, context: logger.exception('Bot error', exc_info=context.error))
-
-    scheduler = AsyncIOScheduler()
-    scheduler.add_job(schedule_welcome_series, 'interval', minutes=15)
-    scheduler.add_job(schedule_broadcasts, 'interval', minutes=5)
-    scheduler.start()
-
-    await startup()
-    await application.run_polling(stop_signals=None)
-    await scheduler.shutdown()
+async def main():
+    config = uvicorn.Config(app, host="0.0.0.0", port=int(os.getenv("PORT", 8000)))
+    server = uvicorn.Server(config)
+    await run_bot()
+    await server.serve()
+    await application.updater.stop()
+    await application.stop()
+    await application.shutdown()
     await shutdown()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
