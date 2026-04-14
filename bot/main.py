@@ -1,7 +1,5 @@
-import asyncio
 import logging
-from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, CallbackQueryHandler
+from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from config import BOT_TOKEN
 from db.connection import init_db, close_db
@@ -25,25 +23,28 @@ application.add_handler(CommandHandler('link', link_handler))
 application.add_handler(CommandHandler('refs', referrals_handler))
 application.add_handler(CommandHandler('ai', ai_handler))
 application.add_handler(CallbackQueryHandler(menu_callback))
-application.add_error_handler(lambda update, context: logger.exception('Bot error', exc_info=con
-Set-Content -Path main.py -Value @"
-import asyncio
-import os
-import uvicorn
-from api.main import app
-from bot.main import application, run_bot, shutdown
+application.add_error_handler(lambda update, context: logger.exception('Bot error', exc_info=context.error))
+
+scheduler = AsyncIOScheduler()
+scheduler.add_job(schedule_welcome_series, 'interval', minutes=15)
+scheduler.add_job(schedule_broadcasts, 'interval', minutes=5)
 
 
-async def main():
-    config = uvicorn.Config(app, host="0.0.0.0", port=int(os.getenv("PORT", 8000)))
-    server = uvicorn.Server(config)
-    await run_bot()
-    await server.serve()
-    await application.updater.stop()
-    await application.stop()
-    await application.shutdown()
-    await shutdown()
+async def startup():
+    pool = await init_db()
+    await create_tables(pool)
+    await ensure_defaults(pool)
 
 
-if __name__ == "__main__":
-    asyncio.run(main())
+async def shutdown():
+    await close_db()
+
+
+async def run_bot():
+    if not BOT_TOKEN:
+        raise RuntimeError('BOT_TOKEN is required')
+    scheduler.start()
+    await startup()
+    await application.initialize()
+    await application.start()
+    await application.updater.start_polling()
